@@ -55,3 +55,23 @@ CREATE TABLE dbo.Users (
     CONSTRAINT CK_Users_Role CHECK (Role IN ('Organiser', 'Participant'))
 );
 GO
+
+* =====================================================================
+   2. Events
+      Each Event belongs to exactly one Organiser (Users.Role = 'Organiser').
+   ===================================================================== */
+CREATE TABLE dbo.Events (
+    EventId         INT IDENTITY(1,1)   NOT NULL,
+    OrganiserId     INT                 NOT NULL,
+    EventName       NVARCHAR(150)       NOT NULL,
+    EventType       NVARCHAR(20)        NOT NULL,
+    EventDate       DATETIME            NOT NULL,
+    Location        NVARCHAR(150)       NOT NULL,
+    Description     NVARCHAR(MAX)       NULL,
+    CreatedAt       DATETIME            NOT NULL DEFAULT GETDATE(),
+    CONSTRAINT PK_Events PRIMARY KEY (EventId),
+    CONSTRAINT FK_Events_Organiser FOREIGN KEY (OrganiserId)
+        REFERENCES dbo.Users (UserId),
+    CONSTRAINT CK_Events_Type CHECK (EventType IN ('Running', 'Walking', 'Cycling'))
+);
+GO

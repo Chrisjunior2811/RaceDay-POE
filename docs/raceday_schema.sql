@@ -193,3 +193,19 @@ VALUES
     (2, 'Half Marathon (21.1km)', 21.10, 180.00, 5000),
     (3, 'Full Cycle Tour (109km)', 109.00, 650.00, 10000);
 GO
+
+-- Event Enrolments: sample participants entering categories
+INSERT INTO dbo.EventEnrolments (ParticipantId, CategoryId, BibNumber, PaymentStatus)
+VALUES
+    (3, 1, 'BIB1001', 'Paid'),
+    (3, 3, 'BIB1002', 'Paid'),
+    (4, 2, 'BIB1003', 'Pending'),
+    (4, 5, 'BIB1004', 'Paid');
+GO
+ 
+-- Results: sample finished result for the paid 5km entry
+INSERT INTO dbo.Results (EnrolmentId, FinishTimeSeconds, FinishPosition, CategoryPosition, Status)
+VALUES
+    (1, 1523, 45, 12, 'Finished');
+GO
+ 

@@ -75,3 +75,24 @@ CREATE TABLE dbo.Events (
     CONSTRAINT CK_Events_Type CHECK (EventType IN ('Running', 'Walking', 'Cycling'))
 );
 GO
+
+* =====================================================================
+   3. RouteInfo
+      One-to-one with Events. Holds route/elevation detail used by the
+      "prepare for race day" feature (live weather and route info).
+   ===================================================================== */
+CREATE TABLE dbo.RouteInfo (
+    RouteId             INT IDENTITY(1,1)  NOT NULL,
+    EventId             INT                NOT NULL,
+    RouteDescription    NVARCHAR(MAX)      NULL,
+    DistanceKm          DECIMAL(5,2)       NOT NULL,
+    ElevationGainM      INT                NULL DEFAULT 0,
+    StartPoint          NVARCHAR(150)      NULL,
+    EndPoint            NVARCHAR(150)      NULL,
+    MapUrl              NVARCHAR(255)      NULL,
+    CONSTRAINT PK_RouteInfo PRIMARY KEY (RouteId),
+    CONSTRAINT FK_RouteInfo_Event FOREIGN KEY (EventId)
+        REFERENCES dbo.Events (EventId),
+    CONSTRAINT UQ_RouteInfo_EventId UNIQUE (EventId)
+);
+GO

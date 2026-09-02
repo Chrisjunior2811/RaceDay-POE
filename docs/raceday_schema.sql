@@ -36,3 +36,22 @@ IF OBJECT_ID('dbo.RouteInfo', 'U') IS NOT NULL DROP TABLE dbo.RouteInfo;
 IF OBJECT_ID('dbo.Events', 'U') IS NOT NULL DROP TABLE dbo.Events;
 IF OBJECT_ID('dbo.Users', 'U') IS NOT NULL DROP TABLE dbo.Users;
 GO
+
+* =====================================================================
+   1. Users
+      Stores both Organisers and Participants. The Role column drives
+      role-based access in the API (Part 2).
+   ===================================================================== */
+CREATE TABLE dbo.Users (
+    UserId          INT IDENTITY(1,1)   NOT NULL,
+    FullName        NVARCHAR(100)       NOT NULL,
+    Email           NVARCHAR(150)       NOT NULL,
+    PasswordHash    NVARCHAR(255)       NOT NULL,
+    Role            NVARCHAR(20)        NOT NULL,
+    PhoneNumber     NVARCHAR(20)        NULL,
+    CreatedAt       DATETIME            NOT NULL DEFAULT GETDATE(),
+    CONSTRAINT PK_Users PRIMARY KEY (UserId),
+    CONSTRAINT UQ_Users_Email UNIQUE (Email),
+    CONSTRAINT CK_Users_Role CHECK (Role IN ('Organiser', 'Participant'))
+);
+GO

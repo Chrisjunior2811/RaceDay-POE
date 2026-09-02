@@ -114,3 +114,24 @@ CREATE TABLE dbo.Categories (
 );
 GO
 
+* =====================================================================
+   5. EventEnrolments
+      Links a Participant (Users.Role = 'Participant') to a Category.
+   ===================================================================== */
+CREATE TABLE dbo.EventEnrolments (
+    EnrolmentId      INT IDENTITY(1,1)   NOT NULL,
+    ParticipantId    INT                 NOT NULL,
+    CategoryId       INT                 NOT NULL,
+    BibNumber        NVARCHAR(10)        NOT NULL,
+    EnrolmentDate    DATETIME            NOT NULL DEFAULT GETDATE(),
+    PaymentStatus    NVARCHAR(20)        NOT NULL DEFAULT 'Pending',
+    CONSTRAINT PK_EventEnrolments PRIMARY KEY (EnrolmentId),
+    CONSTRAINT FK_Enrolments_Participant FOREIGN KEY (ParticipantId)
+        REFERENCES dbo.Users (UserId),
+    CONSTRAINT FK_Enrolments_Category FOREIGN KEY (CategoryId)
+        REFERENCES dbo.Categories (CategoryId),
+    CONSTRAINT UQ_Enrolments_BibNumber UNIQUE (BibNumber),
+    CONSTRAINT UQ_Enrolments_ParticipantCategory UNIQUE (ParticipantId, CategoryId),
+    CONSTRAINT CK_Enrolments_PaymentStatus CHECK (PaymentStatus IN ('Pending', 'Paid', 'Cancelled'))
+);
+GO

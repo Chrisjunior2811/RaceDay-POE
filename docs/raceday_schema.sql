@@ -135,3 +135,22 @@ CREATE TABLE dbo.EventEnrolments (
     CONSTRAINT CK_Enrolments_PaymentStatus CHECK (PaymentStatus IN ('Pending', 'Paid', 'Cancelled'))
 );
 GO
+
+* =====================================================================
+   6. Results
+      One-to-one (optional) with EventEnrolments; populated after race day.
+   ===================================================================== */
+CREATE TABLE dbo.Results (
+    ResultId            INT IDENTITY(1,1)  NOT NULL,
+    EnrolmentId         INT                NOT NULL,
+    FinishTimeSeconds   INT                NULL,
+    FinishPosition       INT               NULL,
+    CategoryPosition     INT               NULL,
+    Status              NVARCHAR(20)       NOT NULL DEFAULT 'Finished',
+    CONSTRAINT PK_Results PRIMARY KEY (ResultId),
+    CONSTRAINT FK_Results_Enrolment FOREIGN KEY (EnrolmentId)
+        REFERENCES dbo.EventEnrolments (EnrolmentId),
+    CONSTRAINT UQ_Results_EnrolmentId UNIQUE (EnrolmentId),
+    CONSTRAINT CK_Results_Status CHECK (Status IN ('Finished', 'DNF', 'DSQ'))
+);
+GO

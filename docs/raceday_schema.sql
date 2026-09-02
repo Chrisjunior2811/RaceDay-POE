@@ -113,3 +113,4 @@ CREATE TABLE dbo.Categories (
         REFERENCES dbo.Events (EventId)
 );
 GO
+

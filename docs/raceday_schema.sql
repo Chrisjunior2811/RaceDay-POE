@@ -167,3 +167,29 @@ VALUES
     ('Sipho Ndlovu', 'sipho.ndlovu@example.com', 'HASHED_PW_3', 'Participant', '0731112222'),
     ('Emma Botha', 'emma.botha@example.com', 'HASHED_PW_4', 'Participant', '0739998888');
 GO
+
+-- Events: 3 events, owned by the 2 organisers
+INSERT INTO dbo.Events (OrganiserId, EventName, EventType, EventDate, Location, Description)
+VALUES
+    (1, 'Joburg Park Run Challenge', 'Running', '2026-10-03 07:00:00', 'Johannesburg, Gauteng', 'A community park run through Delta Park.'),
+    (1, 'Soweto Marathon', 'Running', '2026-11-08 06:00:00', 'Soweto, Gauteng', 'Annual marathon celebrating Soweto''s heritage.'),
+    (2, 'Cape Town Cycle Tour', 'Cycling', '2026-09-14 06:30:00', 'Cape Town, Western Cape', 'Scenic cycling tour around the Cape Peninsula.');
+GO
+
+-- RouteInfo: one route per event
+INSERT INTO dbo.RouteInfo (EventId, RouteDescription, DistanceKm, ElevationGainM, StartPoint, EndPoint, MapUrl)
+VALUES
+    (1, 'Flat loop through Delta Park with light shade cover.', 5.00, 40, 'Delta Park Main Gate', 'Delta Park Main Gate', 'https://maps.example.com/route/1'),
+    (2, 'Point-to-point route through Soweto streets, moderate hills.', 42.20, 380, 'FNB Stadium', 'Orlando Stadium', 'https://maps.example.com/route/2'),
+    (3, 'Coastal route around the Cape Peninsula with Chapman''s Peak climb.', 109.00, 1200, 'Grand Parade', 'Green Point Stadium', 'https://maps.example.com/route/3');
+GO
+
+-- Categories: at least one per event
+INSERT INTO dbo.Categories (EventId, CategoryName, DistanceKm, EntryFee, MaxParticipants)
+VALUES
+    (1, '5km Fun Run', 5.00, 50.00, 300),
+    (1, '10km Challenge', 10.00, 80.00, 200),
+    (2, 'Full Marathon (42.2km)', 42.20, 250.00, 5000),
+    (2, 'Half Marathon (21.1km)', 21.10, 180.00, 5000),
+    (3, 'Full Cycle Tour (109km)', 109.00, 650.00, 10000);
+GO

@@ -154,3 +154,16 @@ CREATE TABLE dbo.Results (
     CONSTRAINT CK_Results_Status CHECK (Status IN ('Finished', 'DNF', 'DSQ'))
 );
 GO
+
+=====================================================================
+   SEED DATA
+   ===================================================================== */
+ 
+-- Users: 2 Organisers, 2 Participants
+INSERT INTO dbo.Users (FullName, Email, PasswordHash, Role, PhoneNumber)
+VALUES
+    ('Thandiwe Mokoena', 'thandiwe.mokoena@raceday.co.za', 'HASHED_PW_1', 'Organiser', '0821234567'),
+    ('Johan van der Merwe', 'johan.vdm@raceday.co.za', 'HASHED_PW_2', 'Organiser', '0827654321'),
+    ('Sipho Ndlovu', 'sipho.ndlovu@example.com', 'HASHED_PW_3', 'Participant', '0731112222'),
+    ('Emma Botha', 'emma.botha@example.com', 'HASHED_PW_4', 'Participant', '0739998888');
+GO

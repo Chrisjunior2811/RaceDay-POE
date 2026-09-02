@@ -25,7 +25,7 @@ GO
 USE RaceDay;
 GO
 
-/* ---------------------------------------------------------------------
+* ---------------------------------------------------------------------
    Drop tables in reverse dependency order so the script can be re-run
    cleanly on an existing RaceDay database.
    --------------------------------------------------------------------- */
@@ -94,5 +94,22 @@ CREATE TABLE dbo.RouteInfo (
     CONSTRAINT FK_RouteInfo_Event FOREIGN KEY (EventId)
         REFERENCES dbo.Events (EventId),
     CONSTRAINT UQ_RouteInfo_EventId UNIQUE (EventId)
+);
+GO
+
+* =====================================================================
+   4. Categories
+      Each Event can have multiple entry categories (e.g. 5km, 10km).
+   ===================================================================== */
+CREATE TABLE dbo.Categories (
+    CategoryId       INT IDENTITY(1,1)   NOT NULL,
+    EventId          INT                 NOT NULL,
+    CategoryName     NVARCHAR(100)       NOT NULL,
+    DistanceKm       DECIMAL(5,2)        NOT NULL,
+    EntryFee         DECIMAL(8,2)        NOT NULL DEFAULT 0,
+    MaxParticipants  INT                 NOT NULL DEFAULT 500,
+    CONSTRAINT PK_Categories PRIMARY KEY (CategoryId),
+    CONSTRAINT FK_Categories_Event FOREIGN KEY (EventId)
+        REFERENCES dbo.Events (EventId)
 );
 GO

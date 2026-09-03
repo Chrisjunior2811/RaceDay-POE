@@ -41,3 +41,4 @@ RaceDay is a role-based system with two types of users:
 - Views and cancels their own enrolments.
 - Tracks their personal performance history across past events.
 - Views live weather and route information to prepare for race day.
+

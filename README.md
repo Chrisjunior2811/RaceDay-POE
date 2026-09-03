@@ -42,3 +42,4 @@ RaceDay is a role-based system with two types of users:
 - Tracks their personal performance history across past events.
 - Views live weather and route information to prepare for race day.
 
+<img width="1365" height="655" alt="Screenshot 2026-09-03 230404" src="https://github.com/user-attachments/assets/d159b4ab-f9b8-440c-8fb3-7829743ad81d" />

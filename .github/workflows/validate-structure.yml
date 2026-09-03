@@ -1,0 +1,83 @@
+name: Validate Repository Structure
+
+# Runs on every push and pull request targeting main, and can also be
+# triggered manually from the Actions tab.
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  validate-docs-folder:
+    name: Check /docs folder contents
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check /docs folder exists
+        run: |
+          if [ ! -d "docs" ]; then
+            echo "::error::A /docs folder is required at the repository root but was not found."
+            exit 1
+          fi
+          echo "docs folder found."
+
+      - name: Check ERD file exists (PNG or PDF)
+        run: |
+          shopt -s nullglob
+          matches=(docs/*.png docs/*.PNG docs/*.pdf docs/*.PDF)
+          # only keep files whose name suggests they're the ERD
+          erd_matches=()
+          for f in "${matches[@]}"; do
+            lower=$(echo "$f" | tr '[:upper:]' '[:lower:]')
+            if [[ "$lower" == *erd* ]]; then
+              erd_matches+=("$f")
+            fi
+          done
+          if [ ${#erd_matches[@]} -eq 0 ]; then
+            echo "::error::No ERD file found in /docs. Expected a .png or .pdf file with 'erd' in its name."
+            exit 1
+          fi
+          echo "ERD file found: ${erd_matches[0]}"
+
+      - name: Check API endpoint plan exists (PDF or Markdown)
+        run: |
+          shopt -s nullglob
+          matches=(docs/*.md docs/*.MD docs/*.pdf docs/*.PDF)
+          plan_matches=()
+          for f in "${matches[@]}"; do
+            lower=$(echo "$f" | tr '[:upper:]' '[:lower:]')
+            if [[ "$lower" == *endpoint* || "$lower" == *api* ]]; then
+              plan_matches+=("$f")
+            fi
+          done
+          if [ ${#plan_matches[@]} -eq 0 ]; then
+            echo "::error::No API endpoint plan found in /docs. Expected a .md or .pdf file with 'endpoint' or 'api' in its name."
+            exit 1
+          fi
+          echo "API endpoint plan found: ${plan_matches[0]}"
+
+      - name: Check SQL script exists
+        run: |
+          shopt -s nullglob
+          sql_matches=(docs/*.sql docs/*.SQL)
+          if [ ${#sql_matches[@]} -eq 0 ]; then
+            echo "::error::No .sql file found in /docs. A database schema script is required."
+            exit 1
+          fi
+          echo "SQL script found: ${sql_matches[0]}"
+
+      - name: Check README exists at repository root
+        run: |
+          if [ ! -f "README.md" ]; then
+            echo "::error::A README.md is required at the repository root."
+            exit 1
+          fi
+          echo "README.md found."
+
+      - name: Summary
+        run: echo "All required files are present. Repository structure is valid."

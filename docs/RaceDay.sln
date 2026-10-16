@@ -1,0 +1,27 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RaceDay.Api", "RaceDay.Api\RaceDay.Api.csproj", "{8D1B3C52-4A6E-4F0B-9C17-2E5A7D9B1F30}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RaceDay.Tests", "RaceDay.Tests\RaceDay.Tests.csproj", "{3F7A9E14-B2C8-4D65-A0E1-6B4C8D2F5A97}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8D1B3C52-4A6E-4F0B-9C17-2E5A7D9B1F30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D1B3C52-4A6E-4F0B-9C17-2E5A7D9B1F30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D1B3C52-4A6E-4F0B-9C17-2E5A7D9B1F30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D1B3C52-4A6E-4F0B-9C17-2E5A7D9B1F30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F7A9E14-B2C8-4D65-A0E1-6B4C8D2F5A97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F7A9E14-B2C8-4D65-A0E1-6B4C8D2F5A97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F7A9E14-B2C8-4D65-A0E1-6B4C8D2F5A97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F7A9E14-B2C8-4D65-A0E1-6B4C8D2F5A97}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+	branches: [ main ]
+  pull_request:
+	branches: [ main ]
+
+jobs:
+  build:
+	runs-on: ubuntu-latest
+	strategy:
+	  matrix:
+		dotnet-version: [ '8.0.x' ]
+
+	steps:
+	- name: Checkout repository
+	  uses: actions/checkout@v4
+
+	- name: Setup .NET
+	  uses: actions/setup-dotnet@v3
+	  with:
+		dotnet-version: ${{ matrix.dotnet-version }}
+
+	- name: Cache NuGet packages
+	  uses: actions/cache@v4
+	  with:
+		path: ~/.nuget/packages
+		key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+		restore-keys: |
+		  ${{ runner.os }}-nuget-
+
+	- name: Restore
+	  run: dotnet restore Part2/RaceDay.sln
+
+	- name: Build
+	  run: dotnet build Part2/RaceDay.sln --configuration Release --no-restore
+
+	- name: Run tests
+	  run: dotnet test Part2/RaceDay.sln --configuration Release --no-build --verbosity normal

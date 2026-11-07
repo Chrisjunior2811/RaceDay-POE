@@ -9,6 +9,7 @@ public class AppUser
     public string PasswordHash { get; set; } = string.Empty;
     public string Role { get; set; } = string.Empty;
     public string? PhoneNumber { get; set; }
+    public string? ProfilePictureBlobName { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
 
     public ICollection<Event> OrganisedEvents { get; set; } = new List<Event>();

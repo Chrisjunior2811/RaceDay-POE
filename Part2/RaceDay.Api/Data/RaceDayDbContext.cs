@@ -30,6 +30,7 @@ public class RaceDayDbContext : DbContext
             e.Property(x => x.PasswordHash).HasMaxLength(255).IsRequired();
             e.Property(x => x.Role).HasMaxLength(20).IsRequired();
             e.Property(x => x.PhoneNumber).HasMaxLength(20);
+            e.Property(x => x.ProfilePictureBlobName).HasMaxLength(255);
             e.Property(x => x.CreatedAt).HasColumnType("datetime").HasDefaultValueSql("GETDATE()");
             e.HasIndex(x => x.Email).IsUnique().HasDatabaseName("UQ_Users_Email");
         });
@@ -44,6 +45,7 @@ public class RaceDayDbContext : DbContext
             e.Property(x => x.EventDate).HasColumnType("datetime");
             e.Property(x => x.Location).HasMaxLength(150).IsRequired();
             e.Property(x => x.Description).HasColumnType("nvarchar(max)");
+            e.Property(x => x.BannerBlobName).HasMaxLength(255);
             e.Property(x => x.CreatedAt).HasColumnType("datetime").HasDefaultValueSql("GETDATE()");
 
             e.HasOne(x => x.Organiser)

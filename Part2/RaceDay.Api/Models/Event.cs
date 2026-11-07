@@ -10,6 +10,7 @@ public class Event
     public DateTime EventDate { get; set; }
     public string Location { get; set; } = string.Empty;
     public string? Description { get; set; }
+    public string? BannerBlobName { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
 
     public AppUser Organiser { get; set; } = null!;

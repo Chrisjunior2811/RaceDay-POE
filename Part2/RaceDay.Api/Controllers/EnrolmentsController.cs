@@ -147,6 +147,57 @@ public class EnrolmentsController : ControllerBase
         return Ok(enrolments);
     }
 
+    /// <summary>Confirms or un-confirms an enrolment by setting its status to Paid or Pending.</summary>
+    /// <remarks>
+    /// Role required: Organiser who owns the event. Paid is shown as "Confirmed" in the web app.
+    /// To cancel an enrolment use DELETE /api/enrolments/{id}.
+    /// </remarks>
+    /// <response code="200">The updated enrolment.</response>
+    /// <response code="400">PaymentStatus is not Pending or Paid.</response>
+    /// <response code="401">Not logged in.</response>
+    /// <response code="403">Not an Organiser, or the event belongs to another organiser.</response>
+    /// <response code="404">Enrolment does not exist.</response>
+    [HttpPut("enrolments/{id:int}/status")]
+    [Authorize(Roles = Roles.Organiser)]
+    [ProducesResponseType(typeof(EnrolmentDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<EnrolmentDto>> UpdateStatus(int id, [FromBody] UpdateEnrolmentStatusRequest request)
+    {
+        var status = PaymentStatuses.NormaliseSettable(request.PaymentStatus);
+        if (status is null)
+        {
+            return Problem(title: "Invalid status", detail: "PaymentStatus must be Pending or Paid.",
+                statusCode: StatusCodes.Status400BadRequest);
+        }
+
+        var enrolment = await _db.EventEnrolments
+            .Include(en => en.Category).ThenInclude(c => c.Event)
+            .FirstOrDefaultAsync(en => en.EnrolmentId == id);
+
+        if (enrolment is null)
+        {
+            return Problem(title: "Enrolment not found", detail: $"No enrolment with id {id}.", statusCode: StatusCodes.Status404NotFound);
+        }
+
+        if (enrolment.Category.Event.OrganiserId != User.GetUserId())
+        {
+            return Forbid();
+        }
+
+        enrolment.PaymentStatus = status;
+        await _db.SaveChangesAsync();
+
+        var dto = await _db.EventEnrolments.AsNoTracking()
+            .Where(en => en.EnrolmentId == id)
+            .Select(Mappers.EnrolmentProjection)
+            .SingleAsync();
+
+        return Ok(dto);
+    }
+
     /// <summary>Cancels (removes) an enrolment.</summary>
     /// <remarks>
     /// Role required: the Participant who made the enrolment, or the Organiser who owns the event.

@@ -90,6 +90,8 @@ public class ResultsController : ControllerBase
             .Select(Mappers.ResultProjection)
             .SingleAsync();
 
+        await new List<ResultDto> { dto }.AddTotalFinishersAsync(_db);
+
         return CreatedAtAction(nameof(GetById), new { id = result.ResultId }, dto);
     }
 
@@ -115,6 +117,8 @@ public class ResultsController : ControllerBase
             .Select(Mappers.ResultProjection)
             .ToListAsync();
 
+        await results.AddTotalFinishersAsync(_db);
+
         return Ok(results);
     }
 
@@ -137,6 +141,8 @@ public class ResultsController : ControllerBase
         {
             return Problem(title: "Result not found", detail: $"No result with id {id}.", statusCode: StatusCodes.Status404NotFound);
         }
+
+        await new List<ResultDto> { result }.AddTotalFinishersAsync(_db);
 
         return Ok(result);
     }

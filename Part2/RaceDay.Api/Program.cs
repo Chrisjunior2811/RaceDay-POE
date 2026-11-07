@@ -14,6 +14,7 @@ builder.Services.AddDbContext<RaceDayDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddSingleton<IBlobStorageService, AzureBlobStorageService>();
 builder.Services.AddControllers();
 
 // ---------- Authentication: JWT bearer tokens carrying the user's role ----------

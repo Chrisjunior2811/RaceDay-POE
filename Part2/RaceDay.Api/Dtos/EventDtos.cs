@@ -56,6 +56,21 @@ public class UpdateEventRequest
     public string Location { get; set; } = string.Empty;
 
     public string? Description { get; set; }
+
+    /// <summary>Optional. Running, Walking or Cycling. Leave out to keep the current type.</summary>
+    public string? EventType { get; set; }
+
+    /// <summary>Optional. Leave out to keep the current distance.</summary>
+    [Range(0.01, 999.99)]
+    public decimal? DistanceKm { get; set; }
+
+    public string? RouteDescription { get; set; }
+
+    [StringLength(150)]
+    public string? StartPoint { get; set; }
+
+    [StringLength(150)]
+    public string? EndPoint { get; set; }
 }
 
 public class CategoryRequest
@@ -105,10 +120,18 @@ public class EventDto
     public decimal? DistanceKm { get; set; }
     public int OrganiserId { get; set; }
     public string OrganiserName { get; set; } = string.Empty;
+    public bool HasBanner { get; set; }
 }
 
 public class EventDetailDto : EventDto
 {
     public RouteDto? Route { get; set; }
     public List<CategoryDto> Categories { get; set; } = new();
+}
+
+/// <summary>An event as shown on the organiser dashboard, with counts.</summary>
+public class OrganiserEventDto : EventDto
+{
+    public int CategoryCount { get; set; }
+    public int EnrolmentCount { get; set; }
 }

@@ -39,3 +39,12 @@ public static class UserClaimsExtensions
             : throw new InvalidOperationException("The authenticated user has no valid 'sub' claim.");
     }
 }
+
+/// <summary>Payment/confirmation status values an organiser can set (the UI shows Paid as "Confirmed").</summary>
+public static class PaymentStatuses
+{
+    public static readonly string[] Settable = { "Pending", "Paid" };
+
+    public static string? NormaliseSettable(string? value) =>
+        Settable.FirstOrDefault(s => string.Equals(s, value?.Trim(), StringComparison.OrdinalIgnoreCase));
+}

@@ -50,6 +50,7 @@ public class UserDto
     public string Role { get; set; } = string.Empty;
     public string? PhoneNumber { get; set; }
     public DateTime CreatedAt { get; set; }
+    public bool HasProfilePicture { get; set; }
 }
 
 public class LoginResponse

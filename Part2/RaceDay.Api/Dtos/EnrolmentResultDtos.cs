@@ -15,6 +15,7 @@ public class EnrolmentDto
     public string BibNumber { get; set; } = string.Empty;
     public DateTime EnrolmentDate { get; set; }
     public string PaymentStatus { get; set; } = string.Empty;
+    public bool HasResult { get; set; }
 }
 
 public class CaptureResultRequest
@@ -48,9 +49,25 @@ public class ResultDto
     public int? CategoryPosition { get; set; }
     public string Status { get; set; } = string.Empty;
 
+    /// <summary>Number of participants who finished the event (for "47th out of 312").</summary>
+    public int TotalFinishers { get; set; }
+
     /// <summary>FinishTimeSeconds formatted as hh:mm:ss.</summary>
     public string? FinishTime =>
         FinishTimeSeconds.HasValue
             ? TimeSpan.FromSeconds(FinishTimeSeconds.Value).ToString(@"hh\:mm\:ss")
             : null;
+}
+
+public class UpdateEnrolmentStatusRequest
+{
+    /// <summary>Pending or Paid (shown as "Confirmed" in the web app).</summary>
+    [Required]
+    public string PaymentStatus { get; set; } = string.Empty;
+}
+
+public class ImageUploadResponse
+{
+    public string Message { get; set; } = string.Empty;
+    public bool HasImage { get; set; }
 }

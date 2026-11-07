@@ -14,7 +14,8 @@ public static class Mappers
         Email = u.Email,
         Role = u.Role,
         PhoneNumber = u.PhoneNumber,
-        CreatedAt = u.CreatedAt
+        CreatedAt = u.CreatedAt,
+        HasProfilePicture = u.ProfilePictureBlobName != null
     };
 
     public static RouteDto ToDto(this RouteInfo r) => new()
@@ -48,6 +49,7 @@ public static class Mappers
         Location = e.Location,
         Description = e.Description,
         DistanceKm = e.Route?.DistanceKm,
+        HasBanner = e.BannerBlobName != null,
         OrganiserId = e.OrganiserId,
         OrganiserName = e.Organiser.FullName,
         Route = e.Route?.ToDto(),
@@ -65,7 +67,8 @@ public static class Mappers
         Description = e.Description,
         DistanceKm = e.Route != null ? e.Route.DistanceKm : (decimal?)null,
         OrganiserId = e.OrganiserId,
-        OrganiserName = e.Organiser.FullName
+        OrganiserName = e.Organiser.FullName,
+        HasBanner = e.BannerBlobName != null
     };
 
     public static readonly Expression<Func<Category, CategoryDto>> CategoryProjection = c => new CategoryDto
@@ -90,7 +93,8 @@ public static class Mappers
         EventDate = en.Category.Event.EventDate,
         BibNumber = en.BibNumber,
         EnrolmentDate = en.EnrolmentDate,
-        PaymentStatus = en.PaymentStatus
+        PaymentStatus = en.PaymentStatus,
+        HasResult = en.Result != null
     };
 
     public static readonly Expression<Func<RaceResult, ResultDto>> ResultProjection = r => new ResultDto

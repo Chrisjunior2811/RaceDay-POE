@@ -1,0 +1,64 @@
+@model ProfileViewModel
+@{
+    ViewData["Title"] = "My profile";
+    var initial = string.IsNullOrEmpty(Model.FullName) ? "?" : Model.FullName.Substring(0, 1).ToUpperInvariant();
+}
+
+<section class="rd-hero mb-4">
+    <p class="rd-eyebrow">Your details</p>
+    <h1 class="rd-display">My profile</h1>
+</section>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="rd-card text-center">
+            @if (Model.HasPicture)
+            {
+                <img class="rd-avatar mb-3" src="@Url.Action("ProfilePicture", "Media")" alt="Your profile picture" />
+            }
+            else
+            {
+                <div class="rd-avatar rd-avatar-initial mb-3">@initial</div>
+            }
+            <h2 class="rd-card-title mb-0">@Model.FullName</h2>
+            <p class="text-muted">@Model.Role</p>
+
+            <form asp-action="Picture" method="post" enctype="multipart/form-data" class="text-start">
+                <label for="picture" class="form-label">Profile picture</label>
+                <input type="file" id="picture" name="picture" accept=".jpg,.jpeg,.png,.webp" class="form-control" required />
+                <div class="form-text">JPG, PNG or WebP, up to 5 MB.</div>
+                <button type="submit" class="btn rd-btn-accent w-100 mt-3">Upload picture</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="rd-card">
+            <h2 class="rd-card-title">Personal information</h2>
+            <form asp-action="Update" method="post" novalidate>
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="FullName" class="form-label"></label>
+                        <input asp-for="FullName" class="form-control" />
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="PhoneNumber" class="form-label"></label>
+                        <input asp-for="PhoneNumber" class="form-control" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Email address</label>
+                        <input class="form-control" value="@Model.Email" disabled />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Member since</label>
+                        <input class="form-control" value="@(Model.MemberSince.HasValue ? Format.ShortDate(Model.MemberSince.Value) : "")" disabled />
+                    </div>
+                </div>
+                <button type="submit" class="btn rd-btn-accent">Save changes</button>
+            </form>
+        </div>
+    </div>
+</div>

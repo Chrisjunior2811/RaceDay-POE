@@ -1,0 +1,73 @@
+@model EnrolmentsPageViewModel
+@{
+    ViewData["Title"] = "Enrolments";
+    var confirmed = Model.Enrolments.Count(e => e.PaymentStatus == "Paid");
+    var pending = Model.Enrolments.Count(e => e.PaymentStatus == "Pending");
+}
+
+<a asp-controller="ManageEvents" asp-action="Index" class="rd-back"><i class="bi bi-arrow-left"></i> My events</a>
+
+<div class="mt-2 mb-3">
+    <p class="rd-eyebrow mb-0">Enrolments for</p>
+    <h1 class="rd-title mb-0">@Model.Event.EventName</h1>
+    <span class="text-muted">@Format.DateAndTime(Model.Event.EventDate) - @Model.Event.Location</span>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-sm-4"><div class="rd-stat"><span class="rd-stat-number">@Model.Enrolments.Count</span><span class="rd-stat-label">Total enrolled</span></div></div>
+    <div class="col-sm-4"><div class="rd-stat rd-stat-green"><span class="rd-stat-number">@confirmed</span><span class="rd-stat-label">Confirmed</span></div></div>
+    <div class="col-sm-4"><div class="rd-stat rd-stat-amber"><span class="rd-stat-number">@pending</span><span class="rd-stat-label">Pending</span></div></div>
+</div>
+
+@if (Model.Enrolments.Count == 0)
+{
+    <div class="rd-card text-center">
+        <i class="bi bi-people rd-big-icon"></i>
+        <h2 class="rd-card-title">Nobody has enrolled yet</h2>
+        <p class="text-muted mb-0">Enrolments will appear here as participants sign up.</p>
+    </div>
+}
+else
+{
+    <div class="rd-card">
+        <div class="table-responsive">
+            <table class="table rd-table align-middle mb-0">
+                <thead>
+                    <tr><th>Participant</th><th>Category</th><th>Bib</th><th>Enrolled</th><th>Status</th><th></th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Enrolments)
+                    {
+                        <tr>
+                            <td><strong>@item.ParticipantName</strong></td>
+                            <td>@item.CategoryName</td>
+                            <td>@item.BibNumber</td>
+                            <td>@Format.ShortDate(item.EnrolmentDate)</td>
+                            <td><partial name="_StatusBadge" model="item.PaymentStatus" /></td>
+                            <td class="text-end text-nowrap">
+                                <form asp-action="SetStatus" asp-route-eventId="@Model.Event.EventId" asp-route-id="@item.EnrolmentId" method="post" class="d-inline">
+                                    @if (item.PaymentStatus == "Paid")
+                                    {
+                                        <input type="hidden" name="status" value="Pending" />
+                                        <button type="submit" class="btn btn-sm btn-outline-warning">Set to pending</button>
+                                    }
+                                    else
+                                    {
+                                        <input type="hidden" name="status" value="Paid" />
+                                        <button type="submit" class="btn btn-sm btn-success">Confirm</button>
+                                    }
+                                </form>
+                                @if (!item.HasResult)
+                                {
+                                    <form asp-action="Remove" asp-route-eventId="@Model.Event.EventId" asp-route-id="@item.EnrolmentId" method="post" class="d-inline" onsubmit="return confirm('Remove this enrolment?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

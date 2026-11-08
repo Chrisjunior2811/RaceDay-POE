@@ -1,0 +1,123 @@
+@model EventDetailsViewModel
+@{
+    var evt = Model.Event;
+    ViewData["Title"] = evt.EventName;
+}
+
+<a asp-controller="Home" asp-action="Index" class="rd-back"><i class="bi bi-arrow-left"></i> All events</a>
+
+<div class="row g-4 mt-1">
+    <div class="col-lg-8">
+        <div class="rd-card p-0 overflow-hidden">
+            @if (evt.HasBanner)
+            {
+                <img class="rd-banner rd-banner-lg" src="@Url.Action("EventBanner", "Media", new { id = evt.EventId })" alt="Banner for @evt.EventName" />
+            }
+            else
+            {
+                <img class="rd-banner rd-banner-lg" src="~/img/event-placeholder.svg" alt="RaceDay event" />
+            }
+            <div class="p-4">
+                <span class="badge rd-type rd-type-@evt.EventType.ToLowerInvariant()"><i class="bi @Format.TypeIcon(evt.EventType)"></i> @evt.EventType</span>
+                <h1 class="rd-title mt-2">@evt.EventName</h1>
+                <p class="lead">@evt.Description</p>
+
+                <dl class="row rd-facts mb-0">
+                    <dt class="col-sm-3">When</dt>
+                    <dd class="col-sm-9">@Format.DateAndTime(evt.EventDate) (@Format.DaysUntil(evt.EventDate))</dd>
+                    <dt class="col-sm-3">Where</dt>
+                    <dd class="col-sm-9">@evt.Location</dd>
+                    @if (evt.DistanceKm.HasValue)
+                    {
+                        <dt class="col-sm-3">Distance</dt>
+                        <dd class="col-sm-9">@evt.DistanceKm.Value.ToString("0.##") km</dd>
+                    }
+                    @if (evt.Route is not null && !string.IsNullOrWhiteSpace(evt.Route.StartPoint))
+                    {
+                        <dt class="col-sm-3">Start</dt>
+                        <dd class="col-sm-9">@evt.Route.StartPoint</dd>
+                    }
+                    @if (evt.Route is not null && !string.IsNullOrWhiteSpace(evt.Route.EndPoint))
+                    {
+                        <dt class="col-sm-3">Finish</dt>
+                        <dd class="col-sm-9">@evt.Route.EndPoint</dd>
+                    }
+                    @if (evt.Route is not null && !string.IsNullOrWhiteSpace(evt.Route.RouteDescription))
+                    {
+                        <dt class="col-sm-3">Route notes</dt>
+                        <dd class="col-sm-9">@evt.Route.RouteDescription</dd>
+                    }
+                    <dt class="col-sm-3">Organiser</dt>
+                    <dd class="col-sm-9">@evt.OrganiserName</dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="rd-card mt-4">
+            <h2 class="rd-card-title">Categories</h2>
+            @if (evt.Categories.Count == 0)
+            {
+                <p class="text-muted mb-0">The organiser has not added any categories yet.</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table rd-table align-middle mb-0">
+                        <thead><tr><th>Category</th><th>Distance</th><th>Entry fee</th><th>Places</th></tr></thead>
+                        <tbody>
+                            @foreach (var category in evt.Categories)
+                            {
+                                <tr>
+                                    <td><strong>@category.CategoryName</strong></td>
+                                    <td>@category.DistanceKm.ToString("0.##") km</td>
+                                    <td>@Format.Rand(category.EntryFee)</td>
+                                    <td>@category.MaxParticipants</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="rd-card rd-sticky">
+            <h2 class="rd-card-title">Enrol</h2>
+
+            @if (Model.ExistingEnrolment is not null)
+            {
+                <p>You are enrolled in <strong>@Model.ExistingEnrolment.CategoryName</strong>.</p>
+                <p class="mb-1">Bib number: <strong>@Model.ExistingEnrolment.BibNumber</strong></p>
+                <p>Status: <partial name="_StatusBadge" model="Model.ExistingEnrolment.PaymentStatus" /></p>
+                <a asp-controller="MyEnrolments" asp-action="Index" class="btn btn-outline-secondary w-100">View my enrolments</a>
+            }
+            else if (evt.Categories.Count == 0)
+            {
+                <p class="text-muted mb-0">Enrolment opens once the organiser adds categories.</p>
+            }
+            else if (evt.EventDate < DateTime.Now)
+            {
+                <p class="text-muted mb-0">This event has already taken place.</p>
+            }
+            else
+            {
+                <form asp-action="Enrol" method="post">
+                    <input type="hidden" name="eventId" value="@evt.EventId" />
+                    <p class="text-muted">Choose your category:</p>
+                    @foreach (var category in evt.Categories)
+                    {
+                        <div class="form-check rd-category">
+                            <input class="form-check-input" type="radio" name="categoryId" id="cat-@category.CategoryId" value="@category.CategoryId" required />
+                            <label class="form-check-label" for="cat-@category.CategoryId">
+                                <strong>@category.CategoryName</strong>
+                                <span class="d-block small text-muted">@category.DistanceKm.ToString("0.##") km - @Format.Rand(category.EntryFee)</span>
+                            </label>
+                        </div>
+                    }
+                    <button type="submit" class="btn rd-btn-accent w-100 mt-3">Enrol now</button>
+                </form>
+            }
+        </div>
+    </div>
+</div>

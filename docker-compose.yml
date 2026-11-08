@@ -1,0 +1,68 @@
+# RaceDay - one command starts everything:
+#
+#     docker compose up --build
+#
+#   Web app (MVC)      http://localhost:5090
+#   API + Swagger UI   http://localhost:5080/swagger
+#
+# Services: SQL Server, Azurite (local Azure Blob Storage emulator), the Part 2 API and the Part 3 MVC app.
+# To use a real Azure Storage account instead of Azurite, copy .env.example to .env and set
+# AZURE_STORAGE_CONNECTION_STRING.
+
+name: raceday
+
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "${SA_PASSWORD:-RaceDay_Passw0rd!}"
+    volumes:
+      - sqldata:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -Q \"SELECT 1\" || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    command: azurite-blob --blobHost 0.0.0.0 --location /data --skipApiVersionCheck --loose
+    volumes:
+      - azuritedata:/data
+
+  api:
+    build:
+      context: ./Part2
+      dockerfile: RaceDay.Api/Dockerfile
+    environment:
+      ConnectionStrings__DefaultConnection: "Server=db;Database=RaceDayApi;User Id=sa;Password=${SA_PASSWORD:-RaceDay_Passw0rd!};TrustServerCertificate=True"
+      Jwt__Key: "${JWT_KEY:-RaceDay-Docker-Signing-Key-Change-Me-Please-2026!}"
+      Organiser__RegistrationCode: "${ORGANISER_CODE:-RACEDAY-ORGANISER-2026}"
+      AzureStorage__ConnectionString: "${AZURE_STORAGE_CONNECTION_STRING:-DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;}"
+      AzureStorage__ContainerName: "raceday-images"
+    depends_on:
+      db:
+        condition: service_healthy
+      azurite:
+        condition: service_started
+    ports:
+      - "5080:8080"
+    restart: on-failure
+
+  web:
+    build:
+      context: ./Part3
+      dockerfile: RaceDay.Web/Dockerfile
+    environment:
+      Api__BaseUrl: "http://api:8080/"
+    depends_on:
+      - api
+    ports:
+      - "5090:8080"
+    restart: on-failure
+
+volumes:
+  sqldata:
+  azuritedata:

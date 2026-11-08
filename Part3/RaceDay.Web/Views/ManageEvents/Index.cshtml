@@ -1,0 +1,51 @@
+@model List<OrganiserEventDto>
+@{
+    ViewData["Title"] = "My events";
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+    <div>
+        <p class="rd-eyebrow mb-0">Organiser</p>
+        <h1 class="rd-title mb-0">My events</h1>
+    </div>
+    <a asp-action="Create" class="btn rd-btn-accent"><i class="bi bi-plus-lg"></i> New event</a>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="rd-card text-center">
+        <i class="bi bi-calendar-plus rd-big-icon"></i>
+        <h2 class="rd-card-title">No events yet</h2>
+        <a asp-action="Create" class="btn rd-btn-accent">Create your first event</a>
+    </div>
+}
+else
+{
+    <div class="rd-card">
+        <div class="table-responsive">
+            <table class="table rd-table align-middle mb-0">
+                <thead>
+                    <tr><th>Event</th><th>Date</th><th>Type</th><th>Distance</th><th class="text-center">Enrolled</th><th></th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td><strong>@item.EventName</strong><span class="d-block small text-muted">@item.Location</span></td>
+                            <td>@Format.DateAndTime(item.EventDate)</td>
+                            <td><span class="badge rd-type rd-type-@item.EventType.ToLowerInvariant()">@item.EventType</span></td>
+                            <td>@(item.DistanceKm.HasValue ? item.DistanceKm.Value.ToString("0.##") + " km" : "-")</td>
+                            <td class="text-center">@item.EnrolmentCount</td>
+                            <td class="text-end text-nowrap">
+                                <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@item.EventId">Edit</a>
+                                <form asp-action="Delete" asp-route-id="@item.EventId" method="post" class="d-inline" onsubmit="return confirm('Delete this event? This cannot be undone.');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

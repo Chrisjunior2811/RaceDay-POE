@@ -1,0 +1,73 @@
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<section class="rd-hero mb-4">
+    <p class="rd-eyebrow">Organiser</p>
+    <h1 class="rd-display">Dashboard</h1>
+    <p class="mb-0">A summary of everything you have created on RaceDay.</p>
+</section>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4"><div class="rd-stat"><span class="rd-stat-number">@Model.TotalEvents</span><span class="rd-stat-label">Events created</span></div></div>
+    <div class="col-md-4"><div class="rd-stat"><span class="rd-stat-number">@Model.UpcomingEvents</span><span class="rd-stat-label">Upcoming events</span></div></div>
+    <div class="col-md-4"><div class="rd-stat"><span class="rd-stat-number">@Model.TotalEnrolments</span><span class="rd-stat-label">Total enrolments</span></div></div>
+</div>
+
+@if (Model.NextEvent is not null)
+{
+    <div class="rd-card rd-next mb-4">
+        <p class="rd-eyebrow mb-1">Next event</p>
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div>
+                <h2 class="rd-card-title mb-0">@Model.NextEvent.EventName</h2>
+                <span class="text-muted">@Format.DateAndTime(Model.NextEvent.EventDate) - @Model.NextEvent.EnrolmentCount enrolled</span>
+            </div>
+            <span class="rd-countdown fs-5">@Format.DaysUntil(Model.NextEvent.EventDate)</span>
+        </div>
+    </div>
+}
+
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="rd-card-title mb-0">Your events</h2>
+    <a asp-controller="ManageEvents" asp-action="Create" class="btn rd-btn-accent"><i class="bi bi-plus-lg"></i> New event</a>
+</div>
+
+@if (Model.Events.Count == 0)
+{
+    <div class="rd-card text-center">
+        <i class="bi bi-calendar-plus rd-big-icon"></i>
+        <h2 class="rd-card-title">You have not created any events yet</h2>
+        <a asp-controller="ManageEvents" asp-action="Create" class="btn rd-btn-accent">Create your first event</a>
+    </div>
+}
+else
+{
+    <div class="rd-card">
+        <div class="table-responsive">
+            <table class="table rd-table align-middle mb-0">
+                <thead>
+                    <tr><th>Event</th><th>Date</th><th>Type</th><th class="text-center">Categories</th><th class="text-center">Enrolments</th><th></th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Events)
+                    {
+                        <tr>
+                            <td><strong>@item.EventName</strong><span class="d-block small text-muted">@item.Location</span></td>
+                            <td>@Format.ShortDate(item.EventDate)<span class="d-block small rd-countdown">@Format.DaysUntil(item.EventDate)</span></td>
+                            <td><span class="badge rd-type rd-type-@item.EventType.ToLowerInvariant()">@item.EventType</span></td>
+                            <td class="text-center">@item.CategoryCount</td>
+                            <td class="text-center"><strong>@item.EnrolmentCount</strong></td>
+                            <td class="text-end text-nowrap">
+                                <a class="btn btn-sm btn-outline-secondary" asp-controller="ManageCategories" asp-action="Index" asp-route-eventId="@item.EventId">Categories</a>
+                                <a class="btn btn-sm btn-outline-secondary" asp-controller="ManageEnrolments" asp-action="Index" asp-route-eventId="@item.EventId">Enrolments</a>
+                                <a class="btn btn-sm btn-outline-secondary" asp-controller="ManageResults" asp-action="Index" asp-route-eventId="@item.EventId">Results</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

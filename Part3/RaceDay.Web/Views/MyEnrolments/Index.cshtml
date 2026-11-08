@@ -1,0 +1,55 @@
+@model List<EnrolmentDto>
+@{
+    ViewData["Title"] = "My enrolments";
+}
+
+<section class="rd-hero mb-4">
+    <p class="rd-eyebrow">Your race calendar</p>
+    <h1 class="rd-display">My enrolments</h1>
+    <p class="mb-0">Every event you have entered, with its status.</p>
+</section>
+
+@if (Model.Count == 0)
+{
+    <div class="rd-card text-center">
+        <i class="bi bi-clipboard rd-big-icon"></i>
+        <h2 class="rd-card-title">You have not enrolled for anything yet</h2>
+        <a asp-controller="Home" asp-action="Index" class="btn rd-btn-accent">Find an event</a>
+    </div>
+}
+else
+{
+    <div class="rd-card">
+        <div class="table-responsive">
+            <table class="table rd-table align-middle mb-0">
+                <thead>
+                    <tr><th>Event</th><th>Date</th><th>Category</th><th>Bib</th><th>Status</th><th></th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td><a asp-controller="Events" asp-action="Details" asp-route-id="@item.EventId"><strong>@item.EventName</strong></a></td>
+                            <td>@Format.ShortDate(item.EventDate)</td>
+                            <td>@item.CategoryName</td>
+                            <td>@item.BibNumber</td>
+                            <td><partial name="_StatusBadge" model="item.PaymentStatus" /></td>
+                            <td class="text-end">
+                                @if (item.HasResult)
+                                {
+                                    <span class="text-muted small">Result recorded</span>
+                                }
+                                else
+                                {
+                                    <form asp-action="Cancel" asp-route-id="@item.EnrolmentId" method="post" onsubmit="return confirm('Cancel this enrolment?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Cancel</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

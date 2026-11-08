@@ -1,0 +1,23 @@
+@model string
+@{
+    // Paid is shown to users as "Confirmed". Colour coding: green = Confirmed, amber = Pending, red = Cancelled.
+    var css = "bg-secondary";
+    var label = Model;
+
+    if (Model == "Paid")
+    {
+        css = "bg-success";
+        label = "Confirmed";
+    }
+    else if (Model == "Pending")
+    {
+        css = "bg-warning text-dark";
+        label = "Pending";
+    }
+    else if (Model == "Cancelled")
+    {
+        css = "bg-danger";
+        label = "Cancelled";
+    }
+}
+<span class="badge rd-status @css">@label</span>

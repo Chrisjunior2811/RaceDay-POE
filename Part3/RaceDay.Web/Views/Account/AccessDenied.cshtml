@@ -1,0 +1,10 @@
+@{
+    ViewData["Title"] = "Access denied";
+}
+
+<div class="rd-card text-center mx-auto" style="max-width: 560px">
+    <i class="bi bi-shield-lock rd-big-icon"></i>
+    <h1 class="rd-title">That page is not for your role</h1>
+    <p class="text-muted">Organisers and participants each have their own pages in RaceDay. Use the menu to get back to yours.</p>
+    <a class="btn rd-btn-accent" asp-controller="Home" asp-action="Index">Go to my home page</a>
+</div>

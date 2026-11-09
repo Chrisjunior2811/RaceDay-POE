@@ -8,6 +8,10 @@ CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Keep the website on the port used by the solution, even when Visual Studio
+// starts the project without loading the HTTP launch profile.
+builder.WebHost.UseUrls("http://localhost:5090");
+
 // MVC with automatic anti-forgery validation on every POST
 builder.Services.AddControllersWithViews(options =>
 {

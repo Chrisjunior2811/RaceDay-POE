@@ -9,6 +9,10 @@ using RaceDay.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Keep the API on the port used by RaceDay.Web, even when Visual Studio starts
+// the project without loading the HTTP launch profile.
+builder.WebHost.UseUrls("http://localhost:5080");
+
 // ---------- Database (Entity Framework Core, SQL Server) ----------
 builder.Services.AddDbContext<RaceDayDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
